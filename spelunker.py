@@ -13,7 +13,7 @@ class SpelunkerCommand(sublime_plugin.TextCommand):
     jsonObj = json.loads(allText)
     paths = pathsToValue(selectionText, jsonObj)
 
-    lodashPath = '_.chain(__OBJ__)' + lodashify(paths[0]) + '.value()'
+    lodashPath = '_.chain(__OBJ__)' + lodashify(paths[0], selectionText) + '.value()'
 
 
     sublime.set_clipboard(lodashPath)
@@ -27,10 +27,11 @@ def pathsToValue(target, obj = 'null'):
 
   unfixed = [getUnfixed(key, target, obj, pathsToValue) for key in keys]
 
-  return list(filter(lambda arr: len(arr) > 0, functools.reduce(lambda sub1, sub2: list(sub1) + list(sub2), unfixed)))
+  return list(filter(lambda arr: len(arr) > 0, functools.reduce(lambda sub1, sub2: list(sub1) + list(sub2), unfixed, [])))
 
 def getUnfixed(key, target, obj, pathToValue):
   value = obj[key]
+
   if target == value:
       return [[key]]
 
@@ -40,12 +41,15 @@ def getUnfixed(key, target, obj, pathToValue):
   else:
       return [[]]
 
-def lodashify(path):
+def lodashify(path, target):
   lodashified = ''
   
   for idx in range(len(path)):
 
-    if isinstance(path[idx], int):
+    if isinstance(path[idx], int) and idx == len(path) - 1:
+      lodashified += '.get(\'' + str(path[idx]) + '\')'
+
+    elif isinstance(path[idx], int):
       lodashified += '.find(\'' + path[idx + 1] + '\')'
 
     else:
