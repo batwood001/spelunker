@@ -7,11 +7,17 @@ Given a value in an arbitarily nested JSON object, Spelunker will return the pat
 ## Usage
 1. Have a properly formatted JSON object in a ST3 tab. 
 
-2. Highlight the value you want to retrieve the path to (for now, the path must be a string--if it's an int or bool, just throw "'s around it). Do not highlight the " " marks. Use the keyboard shortcut (cmd+shift+s) or right-click on the value and select "spelunker" from the menu. 
+2. Highlight the value you want to retrieve the path to (for now, the path must be a string--if it's an int or bool, just throw "'s around it). Do not highlight the " " marks. Use the keyboard shortcut **cmd+shift+s** or right-click on the value and select "spelunker" from the menu. 
 
 3. The lodash-formatted path is now in your clipboard.
+
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/sI8w2xnrcqQ/0.jpg)]
+(http://www.youtube.com/watch?v=sI8w2xnrcqQ "Video Title")
 
 ## Installation
 Clone this repo into /Users/{username}/Library/Application Support/Sublime Text 3/Packages/
 
 Eventually this will be a proper ST3 package.
+
+## Notes
+- If your object contains multiple instances of the same value, Spelunker will not necessarily find the path to the instance of the value you are looking for. This will be fixed in future versions, but for now you can simply add some extra text to your value to make it unique. 
