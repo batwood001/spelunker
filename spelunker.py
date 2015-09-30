@@ -1,23 +1,33 @@
-import sublime, sublime_plugin, json, functools
+import sublime, sublime_plugin, json, functools, copy
 
 class SpelunkerCommand(sublime_plugin.TextCommand):
   
   def run(self, edit):
     # NOTE: you have to select the value WITHOUT the quotation marks.
     sublime.status_message('Spelunking!')
-    selection = self.view.sel()
-    selectionText = self.view.substr(selection[0])
+    selection = self.view.sel() # (10, 20)
+    originalText = self.view.substr(selection[0])
+    a = selection[0].a
+    b = selection[0].b
+    inserted = self.view.insert(edit, a, 'hd8374jfisha93840plq')
+    if a < b:
+      saltySelection = sublime.Region(a, b + inserted) # (10, 40)
+    else:
+      saltySelection = sublime.Region(a + inserted, b)  
 
+    selectionText = self.view.substr(saltySelection) # 'heeltjeloi'
     allContent = sublime.Region(0, self.view.size())
     allText = self.view.substr(allContent)
     jsonObj = json.loads(allText)
-    paths = pathsToValue(selectionText, jsonObj)
+    self.view.replace(edit, saltySelection, originalText)
 
-    lodashPath = '_.chain(__OBJ__)' + lodashify(paths[0], selectionText) + '.value()'
+    firstPath = pathsToValue(selectionText, jsonObj)[0]
+    strPath = '.'.join([str(x) for x in firstPath])
+    sublime.set_clipboard('__OBJ__.' + strPath)
 
+    # lodashPath = '_.chain(__OBJ__)' + lodashify(paths[0], selectionText) + '.value()'
 
-    sublime.set_clipboard(lodashPath)
-
+    # sublime.set_clipboard(lodashPath)
 
 def pathsToValue(target, obj = 'null'):
   if obj == 'null':
@@ -41,18 +51,18 @@ def getUnfixed(key, target, obj, pathToValue):
   else:
       return [[]]
 
-def lodashify(path, target):
-  lodashified = ''
+# def lodashify(path, target):
+#   lodashified = ''
   
-  for idx in range(len(path)):
+#   for idx in range(len(path)):
 
-    if isinstance(path[idx], int) and idx == len(path) - 1:
-      lodashified += '.get(\'' + str(path[idx]) + '\')'
+#     if isinstance(path[idx], int) and idx == len(path) - 1:
+#       lodashified += '.get(\'' + str(path[idx]) + '\')'
 
-    elif isinstance(path[idx], int):
-      lodashified += '.find(\'' + path[idx + 1] + '\')'
+#     elif isinstance(path[idx], int):
+#       lodashified += '.find(\'' + path[idx + 1] + '\')'
 
-    else:
-      lodashified += '.get(\'' + path[idx] + '\')'
+#     else:
+#       lodashified += '.get(\'' + path[idx] + '\')'
 
-  return lodashified
+#   return lodashified
